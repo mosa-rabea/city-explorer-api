@@ -27,30 +27,29 @@ cityexplorer.get('/', (request, response) => {
 //   }
 // });
 
-cityexplorer.get('/weather/lat/lon', getweatherData);
-function getweatherData(request, response) {
-  let url = `https://api.weatherbit.io/v2.0/subscription/usage?lat=${request.query.lat}&lon=${request.query.lon}&key=${process.env.WEATHERIBT_KEY}`;
-  let weatherData = [];
-  axios
-    .get(url)
-    .then((weatherRes) => {
-      weatherRes.data.data.map((day) => weatherData.push(new Weather(day)));
-      response.send(weatherData);
-    })
-    .catch((error) => {
-      response.status.send(error);
+cityexplorer.get('/weather', (req, res) => {
+  let searchQue = req.query.cityName;
+  let weatherData = {};
+  let url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${searchQue}&key=${process.env.WEATHERIBT_API_KEY}&days=5`;
+
+  axios.get(url).then((weatherRes) => {
+    weatherData = weatherRes.data.data.map((day) => {
+      return new Weather(day);
     });
-}
+    console.log(weatherData);
+    res.send(weatherData);
+  });
+});
 
 class Weather {
-  constructor(data) {
-    this.date = data.datetime;
-    this.description = data.weather.description;
+  constructor(day) {
+    this.date = day.datetime;
+    this.description = day.weather.description;
   }
 }
 
-cityexplorer.get('/movies/city_name', (req, res) => {
-  let movieUrl = `https://api.themoviedb.org/3/movie/550?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.city_name}`;
+cityexplorer.get('/movies', (req, res) => {
+  let movieUrl = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.cityName}`;
 
   let movieDataArr = [];
 
