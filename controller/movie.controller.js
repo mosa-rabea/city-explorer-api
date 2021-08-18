@@ -6,7 +6,7 @@ const Cache = require('../module/Cache');
 
 let cache = new Cache();
 function movieshandel(req, res) {
-  let movieUrl = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.cityName}`;
+  let movieUrl = `https://api.themoviedb.org/3/search/multi?api_key=${process.env.MOVIE_API_KEY}&query=${req.query.cityName}&language=en`;
   let key = `movie-${req.query.cityName}`;
   let movieDataArr = [];
 
